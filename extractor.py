@@ -2,22 +2,33 @@ import os
 import json
 import csv
 import re
+import codecs
 
-def find_json_in_text(content):
+def find_and_parse_json(content):
     """
-    Finds and extracts the JSON string from the raw text file content.
-    The content is expected to have a line like: 1 string m_Script = "{\"Key\": \"Value\"}"
+    Finds the m_Script block and parses its content using the appropriate escape handling.
     """
     match = re.search(r'm_Script\s*=\s*"(.*)"', content, re.DOTALL)
-    if match:
-        json_string = match.group(1)
-        # The string from the file has escaped quotes (\") and escaped newlines (\\r\\n).
-        # We need to unescape these before parsing with the json library.
-        processed_string = json_string.replace('\\"', '"')
-        processed_string = processed_string.replace('\\r\\n', '\n')
-        processed_string = processed_string.lstrip('\ufeff') # Strip BOM
-        return processed_string
-    return None
+    if not match:
+        return None
+
+    json_string_escaped = match.group(1)
+
+    # The 'unicode_escape' codec is designed to handle strings with Python-style
+    # backslash escapes. This is the robust way to handle the file format.
+    # We must strip the BOM before decoding.
+    bom = '\ufeff'
+    if json_string_escaped.startswith(bom):
+        json_string_escaped = json_string_escaped[len(bom):]
+
+    # This will correctly interpret \\" as " and \\r\\n as a newline.
+    decoded_string = codecs.decode(json_string_escaped, 'unicode_escape')
+
+    try:
+        return json.loads(decoded_string)
+    except json.JSONDecodeError as e:
+        print(f"  - Error decoding JSON: {e}")
+        return None
 
 def process_text_segment(text, file_id, segment_index, csv_rows, structure_metadata):
     """
@@ -38,11 +49,7 @@ def main():
     metadata = {}
     entry_counter = 1
 
-    # Regex to split by markers and placeholders, keeping them
-    # Captures: <TAG>, </TAG>, <TAG=...>, {placeholder}, {/placeholder}
     split_pattern = r'(<[^>]+>|{[^}]+})'
-
-    # Regex to check for placeholder-only strings to ignore
     ignore_pattern = r'^{[^}]+}$'
 
     os.makedirs(output_dir, exist_ok=True)
@@ -58,15 +65,9 @@ def main():
         with open(filepath, 'r', encoding='utf-8') as f:
             content = f.read()
 
-        json_string = find_json_in_text(content)
-        if not json_string:
-            print(f"  - No JSON content found in {filename}. Skipping.")
-            continue
-
-        try:
-            data = json.loads(json_string)
-        except json.JSONDecodeError as e:
-            print(f"  - Error decoding JSON from {filename}: {e}")
+        data = find_and_parse_json(content)
+        if not data:
+            print(f"  - No valid JSON found in {filename}. Skipping.")
             continue
 
         for item in data.get('Data', []):
@@ -76,7 +77,12 @@ def main():
             if not json_id or not english_text:
                 continue
 
-            # Rule: Exclude if the text is just a single placeholder like {sigh1}
+            # New rule: Check if the text is surrounded by quotes and strip them.
+            is_quoted = False
+            if english_text.startswith('"') and english_text.endswith('"'):
+                english_text = english_text[1:-1]
+                is_quoted = True
+
             if re.fullmatch(ignore_pattern, english_text):
                 print(f"  - Ignoring entry {json_id} (placeholder only).")
                 continue
@@ -84,30 +90,27 @@ def main():
             file_id = entry_counter
             structure_metadata = []
 
-            # Split the text by the markers
             parts = re.split(split_pattern, english_text)
             segment_index = 1
 
             for part in parts:
-                if not part:  # re.split can produce empty strings
+                if not part:
                     continue
 
-                # Check if the part is a marker/placeholder or regular text
                 if re.fullmatch(split_pattern, part):
                     structure_metadata.append({"type": "marker", "value": part})
                 else:
-                    # This is a text segment
                     segment_index = process_text_segment(part, file_id, segment_index, csv_rows, structure_metadata)
 
             if structure_metadata:
                 metadata[file_id] = {
                     "original_file": filepath,
                     "json_id": json_id,
+                    "is_quoted": is_quoted,
                     "structure": structure_metadata
                 }
                 entry_counter += 1
 
-    # Write the results to files
     csv_filepath = os.path.join(output_dir, 'text_to_translate.csv')
     with open(csv_filepath, 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)

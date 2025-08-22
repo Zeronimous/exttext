@@ -1,0 +1,1 @@
+0 TextAsset Base  1 string m_Name = "sample_data_quotes"  1 string m_Script = "﻿{\"Data\":[\r\n{\"ID\":\"quote_test_1\",\"Chinese\":\"\",\"English\":\"He said, \\\"This is a test.\\\"\",\"Japanese\":\"\",\"TraditionalChinese\":\"\"},\r\n{\"ID\":\"quote_test_2\",\"Chinese\":\"\",\"English\":\"This should work perfectly.\",\"Japanese\":\"\",\"TraditionalChinese\":\"\"}\r\n]}"

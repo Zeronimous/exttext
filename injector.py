@@ -39,7 +39,15 @@ def main():
         with open(original_filepath, 'r', encoding='utf-8') as f:
             original_content = f.read()
 
-        modified_content = original_content
+        # Isolate the content of the m_Script block to perform replacements on.
+        script_match = re.search(r'(m_Script\s*=\s*")(.*)(")', original_content, re.DOTALL)
+        if not script_match:
+            print(f"  - WARNING: Could not find m_Script block in {original_filepath}. Skipping.")
+            continue
+
+        prefix = script_match.group(1)
+        script_content = script_match.group(2)
+        suffix = script_match.group(3)
 
         # Reconstruct all translated strings for the current file
         reconstructed_strings = {}
@@ -47,40 +55,42 @@ def main():
             json_id = entry['json_id']
             reconstructed_strings[json_id] = reconstruct_string(entry['structure'], translations)
 
-        # We must operate on the raw m_Script block
-        script_match = re.search(r'(m_Script\s*=\s*")(.*)(")', original_content, re.DOTALL)
-        if not script_match:
-            print(f"  - WARNING: Could not find m_Script block in {original_filepath}. Skipping.")
-            continue
+        # Replace each entry within the raw script content string
+        for entry_metadata in entries:
+            json_id = entry_metadata['json_id']
+            new_text = reconstructed_strings[json_id]
 
-        prefix = script_match.group(1) # 'm_Script = "'
-        script_content = script_match.group(2) # The actual content with escaped quotes
-        suffix = script_match.group(3) # '"'
+            # Format the final text based on whether it was originally quoted
+            if entry_metadata.get('is_quoted', False):
+                # Escape any quotes inside the translated text first
+                escaped_inner_text = new_text.replace('"', '\\"')
+                # Add the surrounding escaped quotes
+                final_text_for_injection = f'\\"{escaped_inner_text}\\"'
+            else:
+                # Just escape the text as usual
+                final_text_for_injection = new_text.replace('"', '\\"')
 
-        # This is the key: replace within the raw script content string
-        for json_id, new_text in reconstructed_strings.items():
-            # Escape the new text for injection
-            new_text_escaped = new_text.replace('"', '\\"')
-
-            # Build a regex that finds the "English" value belonging to a specific ID
-            # It looks for "ID":"the_id", anything, "English":" and captures the value
+            # This regex finds the "English" field associated with a specific "ID".
+            # It now correctly includes the opening brace of the JSON object.
             pattern = re.compile(
-                f'(\\"ID\\"\\s*:\\s*\\"{json_id}\\".*?\\"English\\"\\s*:\\s*\\")([^\\"]*)(\\")'
+                # Group 1: The part before the value, from the opening brace and ID to the opening quote of the English text.
+                # Note the '{{' to escape the brace for the f-string.
+                f'({{\\"ID\\"\\s*:\\s*\\"{re.escape(json_id)}\\".*?\\"English\\"\\s*:\\s*\\")'
+                # Group 2: The value itself. This pattern matches a string that can contain escaped quotes.
+                r'((?:\\\\"|[^"])*)'
+                # Group 3: The closing quote of the value.
+                r'(\\")'
             )
 
-            # We perform the substitution on the script_content, not the whole file
-            script_content, num_replacements = pattern.subn(
-                f'\\g<1>{new_text_escaped}\\g<3>',
-                script_content,
-                count=1
-            )
+            replacement_string = f'\\g<1>{final_text_for_injection}\\g<3>'
+            script_content, num_replacements = pattern.subn(replacement_string, script_content, count=1)
 
             if num_replacements > 0:
                 print(f'  - Injected text for ID: {json_id}')
             else:
                 print(f'  - FAILED to find text for ID: {json_id}')
 
-        # Rebuild the full file content
+        # Rebuild the full file content with the modified script block
         new_script_block = prefix + script_content + suffix
         modified_content = original_content.replace(script_match.group(0), new_script_block)
 
