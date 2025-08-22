@@ -1,0 +1,110 @@
+{
+    "1": {
+        "original_file": "ingles/sample_data.txt",
+        "json_id": "use_limit_des_36",
+        "structure": [
+            {
+                "type": "text",
+                "csv_id": "1_1"
+            },
+            {
+                "type": "marker",
+                "value": "{p2}"
+            },
+            {
+                "type": "text",
+                "csv_id": "1_2"
+            }
+        ]
+    },
+    "2": {
+        "original_file": "ingles/sample_data.txt",
+        "json_id": "use_limit_des_41",
+        "structure": [
+            {
+                "type": "text",
+                "csv_id": "2_1"
+            }
+        ]
+    },
+    "3": {
+        "original_file": "ingles/sample_data.txt",
+        "json_id": "special_marker_1",
+        "structure": [
+            {
+                "type": "text",
+                "csv_id": "3_1"
+            },
+            {
+                "type": "marker",
+                "value": "<T>"
+            },
+            {
+                "type": "text",
+                "csv_id": "3_2"
+            },
+            {
+                "type": "marker",
+                "value": "</T>"
+            },
+            {
+                "type": "text",
+                "csv_id": "3_3"
+            }
+        ]
+    },
+    "4": {
+        "original_file": "ingles/sample_data.txt",
+        "json_id": "nested_marker_1",
+        "structure": [
+            {
+                "type": "marker",
+                "value": "<A>"
+            },
+            {
+                "type": "marker",
+                "value": "{i}"
+            },
+            {
+                "type": "text",
+                "csv_id": "4_1"
+            },
+            {
+                "type": "marker",
+                "value": "{/i}"
+            },
+            {
+                "type": "marker",
+                "value": "</A>"
+            }
+        ]
+    },
+    "5": {
+        "original_file": "ingles/sample_data.txt",
+        "json_id": "placeholder_1",
+        "structure": [
+            {
+                "type": "text",
+                "csv_id": "5_1"
+            },
+            {
+                "type": "marker",
+                "value": "{p1}"
+            },
+            {
+                "type": "text",
+                "csv_id": "5_2"
+            }
+        ]
+    },
+    "6": {
+        "original_file": "ingles/sample_data.txt",
+        "json_id": "simple_case_1",
+        "structure": [
+            {
+                "type": "text",
+                "csv_id": "6_1"
+            }
+        ]
+    }
+}
