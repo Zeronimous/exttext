@@ -1,11 +1,11 @@
 ID,Text
-1_1,Requires
-1_2, new batteries
-2_1,Needs a match
-3_1,The pipes
-3_2,under the wire mesh
-3_3, aren't too close together; I could fit between them.
-4_1,... Rattle... rumble... screech...
-5_1,Upgrade your cell's cupboard to increase the number of storage compartments to
-5_2, blablabla.
-6_1,This is a simple case.
+1_1,Requires _es
+1_2, new batteries_es
+2_1,Needs a match_es
+3_1,The pipes _es
+3_2,under the wire mesh_es
+3_3, aren't too close together; I could fit between them._es
+4_1,... Rattle... rumble... screech..._es
+5_1,Upgrade your cell's cupboard to increase the number of storage compartments to _es
+5_2, blablabla._es
+6_1,This is a simple case._es
