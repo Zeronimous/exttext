@@ -82,7 +82,11 @@ def main():
                 r'(\\")'
             )
 
-            replacement_string = f'\\g<1>{final_text_for_injection}\\g<3>'
+            # The replacement string in re.sub also uses backslashes for backreferences.
+            # To insert a literal backslash, it must be escaped.
+            final_text_for_sub = final_text_for_injection.replace('\\', '\\\\')
+
+            replacement_string = f'\\g<1>{final_text_for_sub}\\g<3>'
             script_content, num_replacements = pattern.subn(replacement_string, script_content, count=1)
 
             if num_replacements > 0:
