@@ -1,6 +1,6 @@
 {
     "1": {
-        "original_file": "ingles/sample_data.txt",
+        "original_file": "ingles/sample_data_spaces.txt",
         "json_id": "use_limit_des_36",
         "structure": [
             {
@@ -18,7 +18,7 @@
         ]
     },
     "2": {
-        "original_file": "ingles/sample_data.txt",
+        "original_file": "ingles/sample_data_spaces.txt",
         "json_id": "use_limit_des_41",
         "structure": [
             {
@@ -28,7 +28,7 @@
         ]
     },
     "3": {
-        "original_file": "ingles/sample_data.txt",
+        "original_file": "ingles/sample_data_spaces.txt",
         "json_id": "special_marker_1",
         "structure": [
             {
@@ -54,7 +54,7 @@
         ]
     },
     "4": {
-        "original_file": "ingles/sample_data.txt",
+        "original_file": "ingles/sample_data_spaces.txt",
         "json_id": "nested_marker_1",
         "structure": [
             {
@@ -80,7 +80,7 @@
         ]
     },
     "5": {
-        "original_file": "ingles/sample_data.txt",
+        "original_file": "ingles/sample_data_spaces.txt",
         "json_id": "placeholder_1",
         "structure": [
             {
@@ -98,12 +98,120 @@
         ]
     },
     "6": {
-        "original_file": "ingles/sample_data.txt",
+        "original_file": "ingles/sample_data_spaces.txt",
         "json_id": "simple_case_1",
         "structure": [
             {
                 "type": "text",
                 "csv_id": "6_1"
+            }
+        ]
+    },
+    "7": {
+        "original_file": "ingles/sample_data.txt",
+        "json_id": "use_limit_des_36",
+        "structure": [
+            {
+                "type": "text",
+                "csv_id": "7_1"
+            },
+            {
+                "type": "marker",
+                "value": "{p2}"
+            },
+            {
+                "type": "text",
+                "csv_id": "7_2"
+            }
+        ]
+    },
+    "8": {
+        "original_file": "ingles/sample_data.txt",
+        "json_id": "use_limit_des_41",
+        "structure": [
+            {
+                "type": "text",
+                "csv_id": "8_1"
+            }
+        ]
+    },
+    "9": {
+        "original_file": "ingles/sample_data.txt",
+        "json_id": "special_marker_1",
+        "structure": [
+            {
+                "type": "text",
+                "csv_id": "9_1"
+            },
+            {
+                "type": "marker",
+                "value": "<T>"
+            },
+            {
+                "type": "text",
+                "csv_id": "9_2"
+            },
+            {
+                "type": "marker",
+                "value": "</T>"
+            },
+            {
+                "type": "text",
+                "csv_id": "9_3"
+            }
+        ]
+    },
+    "10": {
+        "original_file": "ingles/sample_data.txt",
+        "json_id": "nested_marker_1",
+        "structure": [
+            {
+                "type": "marker",
+                "value": "<A>"
+            },
+            {
+                "type": "marker",
+                "value": "{i}"
+            },
+            {
+                "type": "text",
+                "csv_id": "10_1"
+            },
+            {
+                "type": "marker",
+                "value": "{/i}"
+            },
+            {
+                "type": "marker",
+                "value": "</A>"
+            }
+        ]
+    },
+    "11": {
+        "original_file": "ingles/sample_data.txt",
+        "json_id": "placeholder_1",
+        "structure": [
+            {
+                "type": "text",
+                "csv_id": "11_1"
+            },
+            {
+                "type": "marker",
+                "value": "{p1}"
+            },
+            {
+                "type": "text",
+                "csv_id": "11_2"
+            }
+        ]
+    },
+    "12": {
+        "original_file": "ingles/sample_data.txt",
+        "json_id": "simple_case_1",
+        "structure": [
+            {
+                "type": "text",
+                "csv_id": "12_1"
             }
         ]
     }
